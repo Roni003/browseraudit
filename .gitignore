@@ -14,3 +14,8 @@
 
 # IDE
 /.idea
+
+# Local development TLS certificates and keys
+/certs/
+/nginx/config/privkey.pem
+/nginx/config/fullchain.pem
