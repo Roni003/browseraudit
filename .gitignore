@@ -11,3 +11,6 @@
 
 # Local directory
 /tmp
+
+# IDE
+/.idea
