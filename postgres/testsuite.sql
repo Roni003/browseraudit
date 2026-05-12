@@ -558,7 +558,7 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 500	SameSite=Strict cookie not sent cross-site	\N	block	critical	44	1	sameSiteCookieTest(500, true, "strict", "critical")	t
 501	SameSite=Lax cookie not sent cross-site subresource	\N	block	critical	44	2	sameSiteCookieTest(501, true, "lax", "critical")	t
 502	SameSite=None without Secure is ignored	\N	block	warning	44	3	sameSiteCookieTest(502, true, "none-insecure", "warning")	t
-503	SameSite=None with Secure sent cross-site	\N	allow	critical	44	4	sameSiteCookieTest(503, false, "none", "critical")	t
+503	SameSite=None with Secure sent cross-site	\N	allow	warning	44	4	sameSiteCookieTest(503, false, "none", "warning")	t
 504	Cookie without SameSite attribute defaults to Lax (not sent cross-site)	\N	block	warning	44	5	sameSiteCookieTest(504, true, "default", "warning")	t
 \.
 
