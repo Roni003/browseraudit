@@ -792,7 +792,7 @@ var cookiesHttpOnlyScriptToServer = function (testID) {
 function sameSiteCookieTest(testID, shouldBeBlocked, policy) {
   var cookieName = "samesite" + testID + new Date().getTime();
 
-  return function() {
+  var test_template = function() {
     var thisTest = this;
 
     var sessid = $.cookie("sessid");
@@ -827,6 +827,15 @@ function sameSiteCookieTest(testID, shouldBeBlocked, policy) {
           });
     });
   };
+
+  var test_source = test_template
+    .toString()
+    .replace(/cookieName/g, '"' + cookieName + '"')
+    .replace(/policy/g, '"' + policy + '"')
+    .replace(/shouldBeBlocked/g, shouldBeBlocked);
+  test_template.toString = function () { return test_source; };
+  test_template.reportData = {};
+  return test_template;
 }
 
 // Cookies -> Secure flag -> cookie set by server should be sent over HTTPS
