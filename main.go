@@ -94,6 +94,9 @@ func main() {
 
 	r.HandleFunc("/csp_cookie", CSPCookieHandler)
 	r.HandleFunc("/httponly_cookie", HttpOnlyCookieHandler)
+	r.HandleFunc("/samesite/set/{name}/{policy}", SetRequestSameSiteCookieHandler)
+	r.HandleFunc("/samesite/save/{name}", SetSessionSameSiteCookieHandler)
+	r.HandleFunc("/samesite/get/{name}", GetSessionSameSiteCookieHandler)
 	r.HandleFunc("/set_request_secure_cookie", SetRequestSecureCookieHandler)
 	r.HandleFunc("/get_request_secure_cookie", GetRequestSecureCookieHandler)
 	r.HandleFunc("/set_session_secure_cookie", SetSessionSecureCookieHandler)

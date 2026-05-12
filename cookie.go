@@ -6,7 +6,10 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 const CSP_COOKIE_NAME = "cspCookie"
@@ -139,4 +142,67 @@ func GetDestroyMeHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Fprintf(w, "nil")
 	}
+}
+
+// Sets a cookie with a given SameSite policy
+func SetRequestSameSiteCookieHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	name := vars["name"]
+	policy := vars["policy"]
+	var sameSite http.SameSite
+
+	secure := true
+	switch strings.ToLower(policy) {
+	case "none":
+		sameSite = http.SameSiteNoneMode
+	case "lax":
+		sameSite = http.SameSiteLaxMode
+	case "strict":
+		sameSite = http.SameSiteStrictMode
+	case "none-insecure":
+		sameSite = http.SameSiteNoneMode
+		secure = false
+	default:
+		http.Error(w, "invalid policy", http.StatusBadRequest)
+		return
+	}
+
+	cookie := &http.Cookie{
+		Name:  name,
+		Value: "test-value",
+		// Needs to be .browseraudit.org for SameSite since the cookie is being sent from .com -> .org,
+		// so Domain check isn't a problem and we can test SameSite | also set the cookie from .org so RequestHost(r) returns .org domain
+		Domain:   "." + RequestHost(r),
+		Path:     "/",
+		Expires:  time.Now().Add(1 * time.Minute),
+		SameSite: sameSite,
+		Secure:   secure,
+	}
+	http.SetCookie(w, cookie)
+	http.ServeFile(w, r, "./static/pixel.png")
+}
+
+// Saves whether the cookie arrived in this request (called cross-site)
+func SetSessionSameSiteCookieHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	name := vars["name"]
+	session := store.Get(w, r)
+	c, err := r.Cookie(name)
+	if err == nil {
+		session.Set(name, c.Value)
+	} else {
+		session.Set(name, "none")
+	}
+	http.ServeFile(w, r, "./static/pixel.png")
+}
+
+// Returns the saved value to the JS test
+func GetSessionSameSiteCookieHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	session := store.Get(w, r)
+	val, err := session.Get(vars["name"])
+	if err != nil {
+		val = "none"
+	}
+	template.HTMLEscape(w, []byte(val))
 }

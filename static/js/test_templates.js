@@ -789,6 +789,46 @@ var cookiesHttpOnlyScriptToServer = function (testID) {
   return test_template;
 };
 
+function sameSiteCookieTest(testID, shouldBeBlocked, policy) {
+  var cookieName = "samesite" + testID + new Date().getTime();
+
+  return function() {
+    var thisTest = this;
+
+    var sessid = $.cookie("sessid");
+
+    // 1: Set the cookie on browseraudit.org (cross-site, so browser stores it for .browseraudit.org)
+    $("<img>", { src: "https://browseraudit.org/samesite/set/" + cookieName + "/" + policy + "?sessid=" + sessid })
+        .appendTo("div#sandbox")
+        .on("load error", function() {
+
+      // 2: Load an image cross-site from browseraudit.com to browseraudit.org.
+      // The browser applies the SameSite policy to decide whether to send the cookie.
+      $("<img>", { src: "https://browseraudit.org/samesite/save/" + cookieName + "?sessid=" + sessid })
+          .appendTo("div#sandbox")
+          .on("load error", function() {
+
+            // 3: Ask our own server what it received
+            $.get("/samesite/get/" + cookieName, function(result) {
+              if (shouldBeBlocked) {
+                if (result === "none") {
+                  thisTest.PASS("Cookie was not sent with the cross-site request.");
+                } else {
+                  thisTest.CRITICAL("Cookie was sent with the cross-site request.");
+                }
+              } else {
+                if (result !== "none") {
+                  thisTest.PASS("Cookie was sent with the cross-site request.");
+                } else {
+                  thisTest.CRITICAL("Cookie was not sent with the cross-site request.");
+                }
+              }
+            });
+          });
+    });
+  };
+}
+
 // Cookies -> Secure flag -> cookie set by server should be sent over HTTPS
 var cookiesSecureServerToScriptHTTPS = function (testID) {
   var test_template = function () {
