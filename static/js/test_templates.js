@@ -789,8 +789,9 @@ var cookiesHttpOnlyScriptToServer = function (testID) {
   return test_template;
 };
 
-function sameSiteCookieTest(testID, shouldBeBlocked, policy) {
+function sameSiteCookieTest(testID, shouldBeBlocked, policy, severity) {
   var cookieName = "samesite" + testID + new Date().getTime();
+  var failMethod = severity === "warning" ? "WARNING" : "CRITICAL";
 
   var test_template = function() {
     var thisTest = this;
@@ -814,13 +815,13 @@ function sameSiteCookieTest(testID, shouldBeBlocked, policy) {
                 if (result === "none") {
                   thisTest.PASS("Cookie was not sent with the cross-site request.");
                 } else {
-                  thisTest.CRITICAL("Cookie was sent with the cross-site request.");
+                  thisTest[failMethod]("Cookie was sent with the cross-site request.");
                 }
               } else {
                 if (result !== "none") {
                   thisTest.PASS("Cookie was sent with the cross-site request.");
                 } else {
-                  thisTest.CRITICAL("Cookie was not sent with the cross-site request.");
+                  thisTest[failMethod]("Cookie was not sent with the cross-site request.");
                 }
               }
             });
@@ -832,7 +833,8 @@ function sameSiteCookieTest(testID, shouldBeBlocked, policy) {
     .toString()
     .replace(/cookieName/g, '"' + cookieName + '"')
     .replace(/policy/g, '"' + policy + '"')
-    .replace(/shouldBeBlocked/g, shouldBeBlocked);
+    .replace(/shouldBeBlocked/g, shouldBeBlocked)
+    .replace(/failMethod/g, '"' + failMethod + '"');
   test_template.toString = function () { return test_source; };
   test_template.reportData = {};
   return test_template;

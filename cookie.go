@@ -162,6 +162,8 @@ func SetRequestSameSiteCookieHandler(w http.ResponseWriter, r *http.Request) {
 	case "none-insecure":
 		sameSite = http.SameSiteNoneMode
 		secure = false
+	case "default":
+		sameSite = http.SameSiteDefaultMode
 	default:
 		http.Error(w, "invalid policy", http.StatusBadRequest)
 		return
