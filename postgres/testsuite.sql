@@ -68,7 +68,7 @@ COPY public.category (id, parent, title, description, execute_order, live, in_de
 41	11	form-action	\N	16	t	t	\N
 42	11	frame-ancestors	\N	17	t	t	\N
 43	20	Access-Control-Allow-Credentials	\N	5	t	t	\N
-44	25	SameSite flag	<p> These tests check whether the cookies are sent on cross-site requests based on the SameSite attribute </p>	3	t	t	\N
+44	25	SameSite attribute	<p>  When a cookie has the <em>SameSite</em> attribute set, a compliant browser will restrict whether that cookie is included in cross-site requests. This helps protect against cross-site request forgery (CSRF) attacks, where a malicious page tricks a user's browser into making an authenticated request to another site. The <em>SameSite</em> attribute has three values. Strict means the cookie is never sent on cross-site requests at all. Lax is a looser restriction: the cookie is withheld on cross-site subrequests (such as images or iframes) but is sent on top-level navigations. None opts out of the restriction entirely, but modern browsers require the Secure attribute to be set if the <em>SameSite</em> attribute is set to None. </p> <p> <em>SameSite</em> cookies are supported by all major browsers. </p> <p> We have five tests. The first checks that a <em>SameSite</em>=Strict cookie is not sent on a cross-site request. The second checks the same for a <em>SameSite</em>=Lax cookie on a cross-site subrequest (an image load, which is not a top-level navigation). The third checks that a <em>SameSite</em>=None cookie without the Secure flag is rejected by the browser rather than treated as having no <em>SameSite</em> restriction. The fourth checks that a <em>SameSite</em>=None; Secure cookie is correctly permitted on cross-site requests. The fifth checks that a cookie with no <em>SameSite</em> attribute at all defaults to Lax behaviour and is withheld from cross-site subrequests. </p>	3	t	t	\N
 \.
 
 
@@ -555,11 +555,11 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 472	Access-Control-Allow-Credentials true with Allow-Origin "https://test.browseraudit.com"	\N	block	warning	43	2	credentialsExpect(472, "https://test.browseraudit.com", "true", true)	t
 473	Access-Control-Allow-Credentials true with Allow-Origin "*"	\N	block	warning	43	3	credentialsExpect(473, "*", "true", true)	t
 474	Access-Control-Allow-Credentials omitted with Allow-Origin "https://browseraudit.com"	\N	block	warning	43	4	credentialsExpect(474, "https://browseraudit.com", "false", true)	t
-500	SameSite=Strict cookie not sent cross-site	\N	block	critical	44	1	sameSiteCookieTest(500, true, "strict", "critical")	t
-501	SameSite=Lax cookie not sent cross-site subresource	\N	block	critical	44	2	sameSiteCookieTest(501, true, "lax", "critical")	t
-502	SameSite=None without Secure is ignored	\N	block	warning	44	3	sameSiteCookieTest(502, true, "none-insecure", "warning")	t
-503	SameSite=None with Secure sent cross-site	\N	allow	warning	44	4	sameSiteCookieTest(503, false, "none", "warning")	t
-504	Cookie without SameSite attribute defaults to Lax (not sent cross-site)	\N	block	warning	44	5	sameSiteCookieTest(504, true, "default", "warning")	t
+475	SameSite=Strict cookie not sent cross-site	\N	block	critical	44	1	sameSiteCookieTest(500, true, "strict", "critical")	t
+476	SameSite=Lax cookie not sent cross-site subresource	\N	block	critical	44	2	sameSiteCookieTest(501, true, "lax", "critical")	t
+477	SameSite=None without Secure is ignored	\N	block	warning	44	3	sameSiteCookieTest(502, true, "none-insecure", "warning")	t
+478	SameSite=None with Secure sent cross-site	\N	allow	warning	44	4	sameSiteCookieTest(503, false, "none", "warning")	t
+479	Cookie without SameSite attribute defaults to Lax (not sent cross-site)	\N	block	warning	44	5	sameSiteCookieTest(504, true, "default", "warning")	t
 \.
 
 
