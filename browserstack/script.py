@@ -15,8 +15,10 @@ test_me_button = WebDriverWait(driver, 10).until(
 test_me_button.click()
 
 # Wait until the test results link appears
-test_results_link = WebDriverWait(driver, 300).until(
-    EC.presence_of_element_located((By.LINK_TEXT, 'this link'))
+test_results_link = WebDriverWait(driver, 400).until(
+    EC.presence_of_element_located(
+        (By.PARTIAL_LINK_TEXT, "permanent link")
+    )
 )
 
 # Get the href attribute of the test results link
