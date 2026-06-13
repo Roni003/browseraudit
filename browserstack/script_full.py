@@ -3,6 +3,11 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    NoSuchFrameException,
+    StaleElementReferenceException,
+)
 
 # Launch the browser and navigate to BrowserAudit.com
 driver = webdriver.Chrome() # Driver will be overwritten by BrowserStack config file
@@ -22,8 +27,22 @@ print('Clicking the Test Me button')
 test_me_button.click()
 
 try:
-    # Wait until the test results link appears
-    test_results_link = WebDriverWait(driver, 400).until(
+    # Make sure we're polling the top-level document, not a transient test
+    # iframe that the suite may have left the context pointing at.
+    driver.switch_to.default_content()
+
+    # Wait until the test results link appears. The test suite running can cause
+    # issues with the safari driver so we need to handle those exceptions
+    # Treat those as transient and keep polling instead of failing the run.
+    test_results_link = WebDriverWait(
+        driver,
+        400,
+        ignored_exceptions=(
+            NoSuchElementException,
+            NoSuchFrameException,
+            StaleElementReferenceException,
+        ),
+    ).until(
         EC.presence_of_element_located(
             (By.PARTIAL_LINK_TEXT, "permanent link")
         )
