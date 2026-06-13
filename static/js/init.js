@@ -22,10 +22,22 @@ var browserAuditLoadDelayedScripts = function (scriptPaths) {
     });
   };
 
+  // Ensure the scripts are only loaded once, regardless of whether we're
+  // triggered by the Modernizr feature-detection callbacks or the fallback
+  // timeout below.
+  var loadStarted = false;
+  var startLoading = function () {
+    if (loadStarted) return;
+    loadStarted = true;
+    loadScripts();
+  };
+
+  setTimeout(startLoading, 5000);
+
   var asyncModernizrTestsExecuted = 0;
   $.each(asyncModernizrTests, function (i, testName) {
     Modernizr.on(testName, function () {
-      if (++asyncModernizrTestsExecuted === asyncModernizrTests.length) loadScripts();
+      if (++asyncModernizrTestsExecuted === asyncModernizrTests.length) startLoading();
     });
   });
 };

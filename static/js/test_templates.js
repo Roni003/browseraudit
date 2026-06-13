@@ -300,7 +300,7 @@ Reporting-Endpoints: endpoint-1="https://browseraudit.com/csp/pass/267/emptyhtml
     // - Test IDs 241-260 require Flash Player to be installed and for the browser
     //   not to be blocking it on browseraudit.com
   } else if (241 <= testID && testID <= 260) {
-    var prerequisiteMet = [Modernizr.flash, !Modernizr.flash.blocked];
+    var prerequisiteMet = [Modernizr.flash, !(Modernizr.flash && Modernizr.flash.blocked)];
     var prerequisiteText = ["!Modernizr.flash", "Modernizr.flash.blocked"];
     var prerequisiteSkipMessages = [
       "The Flash Player plugin is not installed in this web browser.",
