@@ -144,6 +144,7 @@ func main() {
 
 	r.HandleFunc("/results/{id:[0-9]+}/{passkey:[0-9a-f]+}", ResultsPageHandler)
 	r.HandleFunc("/suite_execution/get/{id:[0-9]+}/{passkey:[0-9a-f]+}", GetSuiteExecutionHandler)
+	r.HandleFunc("/suite_execution/json/{id:[0-9]+}/{passkey:[0-9a-f]+}", GetSuiteExecutionJSONHandler)
 	r.HandleFunc("/suite_execution/put", PutSuiteExecutionHandler)
 
 	r.HandleFunc("/redirect/{dest}", RedirectHandler)

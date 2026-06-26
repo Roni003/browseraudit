@@ -52,6 +52,66 @@ type SuiteExecution struct {
 	TestResults         map[string]TestResult `json:"testResults"`
 }
 
+// GetSuiteExecutionJSONHandler returns the per-test outcomes for a completed
+// test suite execution as machine-readable JSON. It is intended for regression
+// tooling, which records a baseline of per-test outcomes for a pinned browser
+// and compares later runs against it
+func GetSuiteExecutionJSONHandler(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	passkey := mux.Vars(r)["passkey"]
+
+	DontCache(&w)
+	w.Header().Set("Content-Type", "application/json")
+
+	// Validate the passkey and fetch execution-level metadata in one query;
+	// a wrong id/passkey pair simply matches no row.
+	var userAgent, browserAuditVersion string
+	err := db.QueryRow(
+		"SELECT user_agent, browseraudit_version FROM suite_execution WHERE id = $1 AND passkey = $2",
+		id, passkey,
+	).Scan(&userAgent, &browserAuditVersion)
+	if err == sql.ErrNoRows {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, `{"error": "no test suite execution with that id and passkey"}`)
+		return
+	} else if err != nil {
+		log.Panic(err)
+	}
+
+	// Fetch the per-test outcomes for this execution.
+	rows, err := db.Query(
+		"SELECT test_id, outcome, reason, duration FROM suite_execution_test WHERE id = $1 ORDER BY test_id",
+		id,
+	)
+	if err != nil {
+		log.Panic(err)
+	}
+	defer rows.Close()
+
+	testResults := make(map[string]TestResult)
+	for rows.Next() {
+		var testID int
+		var tr TestResult
+		if err := rows.Scan(&testID, &tr.Outcome, &tr.Reason, &tr.Duration); err != nil {
+			log.Panic(err)
+		}
+		testResults[strconv.Itoa(testID)] = tr
+	}
+	if err := rows.Err(); err != nil {
+		log.Panic(err)
+	}
+
+	idInt, _ := strconv.Atoi(id)
+	if err := json.NewEncoder(w).Encode(struct {
+		Id                  int                   `json:"id"`
+		UserAgent           string                `json:"userAgent"`
+		BrowserAuditVersion string                `json:"browserAuditVersion"`
+		TestResults         map[string]TestResult `json:"testResults"`
+	}{idInt, strings.TrimSpace(userAgent), strings.TrimSpace(browserAuditVersion), testResults}); err != nil {
+		log.Panic(err)
+	}
+}
+
 func ResultsPageHandler(w http.ResponseWriter, r *http.Request) {
 	v := struct {
 		Id      string
