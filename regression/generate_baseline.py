@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from common import browser_key, extract_id_and_passkey
+from common import generate_browser_key, extract_id_and_passkey, fetch_results, store_baseline
 
 # Launch the browser and navigate to BrowserAudit.com
 driver = webdriver.Chrome() # Driver will be overwritten by BrowserStack config file
@@ -105,9 +105,10 @@ finally:
     if not isinstance(test_report_link, str) or not test_report_link.strip():
         print("Failed to get test report link")
     else:
+        key = generate_browser_key(driver)
         run_id, passkey = extract_id_and_passkey(test_report_link)
-        print("passkey", passkey, "id", run_id)
-        print("Key", browser_key(driver))
+        results = fetch_results(run_id, passkey)
+        store_baseline(key, results)
 
     # Close the browser
     driver.quit()
