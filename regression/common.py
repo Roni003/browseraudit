@@ -13,6 +13,13 @@ class Result:
     browser_audit_version: str
     test_results: dict[str, str]
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "Result":
+        return cls(
+            browser_audit_version=data["browserAuditVersion"],
+            test_results=data["testResults"],
+        )
+
 def fetch_results(id: str | int, passkey: str) -> Result:
     url = URL_BASE + "/suite_execution/json/" + str(id) + "/" + str(passkey)
     req = requests.get(url, verify=False) # Need to set verify to false to allow the self signed certificate

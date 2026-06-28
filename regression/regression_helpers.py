@@ -1,0 +1,45 @@
+import json
+import os.path
+
+from common import Result, BASELINE_DIR
+
+def parse_baseline(browser_key: str) -> Result:
+    path = os.path.join(BASELINE_DIR, browser_key + ".json")
+    if not os.path.exists(path):
+        raise Exception("Baseline does not exist for browser key: " + browser_key)
+
+    with open(path, "r") as file:
+        data = json.load(file)
+        return Result.from_dict(data)
+
+def compare_results(baseline: Result, current: Result) -> bool:
+    failed = _diff_test_results(baseline, current)
+    if len(failed) == 0:
+        print("Passed regression test")
+        return True
+    else:
+        print(f"Failed regression test, {len(failed)} tests failed:")
+        for test in failed:
+            print(test)
+        return False
+
+def _diff_test_results(baseline: Result, current: Result) -> list[dict]:
+    baseline_results = baseline.test_results
+    current_results = current.test_results
+    failed_tests = []
+    for key, val in baseline_results.items():
+        if key not in current_results:
+            continue
+
+        baseline_result = baseline_results[key]
+        current_result = current_results[key]
+        if baseline_result == current_result:
+            continue
+
+        failed_tests.append({
+            "test_id": key,
+            "expected": baseline_result,
+            "got": current_result
+        })
+
+    return failed_tests
