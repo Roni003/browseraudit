@@ -1,7 +1,7 @@
 import json
 import os.path
 
-from common import Result, BASELINE_DIR
+from common import Result, BASELINE_DIR, generate_browser_key
 
 def parse_baseline(browser_key: str) -> Result:
     path = os.path.join(BASELINE_DIR, browser_key + ".json")
@@ -12,13 +12,14 @@ def parse_baseline(browser_key: str) -> Result:
         data = json.load(file)
         return Result.from_dict(data)
 
-def compare_results(baseline: Result, current: Result) -> bool:
+def compare_results(driver, baseline: Result, current: Result) -> bool:
     failed = _diff_test_results(baseline, current)
+    browser_key = generate_browser_key(driver)
     if len(failed) == 0:
-        print("Passed regression test")
+        print(f"--- Passed regression test ({browser_key}) ---")
         return True
     else:
-        print(f"Failed regression test, {len(failed)} tests failed:")
+        print(f"--- Failed regression test ({browser_key}), {len(failed)} tests failed ---")
         for test in failed:
             print(test)
         return False

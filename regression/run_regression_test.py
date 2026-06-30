@@ -10,4 +10,4 @@ with BrowserStackRun(driver) as run:
     id, passkey = common.extract_id_and_passkey(link)
     current = common.fetch_results(id, passkey)
     baseline = regression_helpers.parse_baseline(common.generate_browser_key(driver))
-    ok = regression_helpers.compare_results(baseline, current)
+    ok = regression_helpers.compare_results(driver, baseline, current)
