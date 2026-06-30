@@ -19,3 +19,5 @@
 /certs/
 /nginx/config/privkey.pem
 /nginx/config/fullchain.pem
+
+server
