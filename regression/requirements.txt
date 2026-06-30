@@ -1,0 +1,6 @@
+# Dependencies for the BrowserAudit regression testing scripts.
+# Install with: pip install -r requirements.txt
+selenium==4.44.0
+requests==2.32.3
+PyYAML==6.0.3
+browserstack-sdk==1.46.0
