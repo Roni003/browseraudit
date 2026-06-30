@@ -45,11 +45,6 @@ def generate_browser_key():
     out = f""
 
     for key, val in platform.items():
-        # Truncate version to N components so auto-updating browsers
-        # (Chrome "120.0.6099.109") don't invalidate the baseline every patch.
-        if key == "version":
-            val = ".".join(val.split(".")[:2])
-
         out += _slug(val) + "-"
 
     return out.removesuffix("-")

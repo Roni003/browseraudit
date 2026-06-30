@@ -12,7 +12,7 @@ def parse_baseline(browser_key: str) -> Result:
         data = json.load(file)
         return Result.from_dict(data)
 
-def compare_results(driver, baseline: Result, current: Result) -> bool:
+def compare_results(baseline: Result, current: Result) -> bool:
     failed = _diff_test_results(baseline, current)
     browser_key = generate_browser_key()
     if len(failed) == 0:
