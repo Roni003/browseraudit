@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass
 
 import requests
+import yaml
 from browserstack_sdk import BrowserStackSdk
 
 URL_BASE = "https://browseraudit.com"
@@ -53,13 +54,26 @@ def generate_browser_key():
 
     return out.removesuffix("-")
 
+def generate_yaml_string():
+    platform = BrowserStackSdk.get_current_platform()
+    yaml_str = yaml.dump(platform, default_flow_style=False, sort_keys=False)
+    return yaml_str
+
 def store_baseline(browser_key: str, result: Result):
     os.makedirs(BASELINE_DIR, exist_ok=True)
     path = os.path.join(BASELINE_DIR, browser_key + ".json")
     with open(path, 'w') as f:
+        # Sort test IDs numerically rather than lexicographically
+        sorted_results = {
+            tid: result.test_results[tid]
+            for tid in sorted(result.test_results, key=int)
+        }
         out = {
             "browserKey": browser_key,
             "browserAuditVersion": result.browser_audit_version,
-            "testResults": result.test_results
+            # We store the platform info YAML string so future users know what
+            # info to put in browserstack.yml to run against this baseline
+            "platformInfoYaml": generate_yaml_string(),
+            "testResults": sorted_results,
         }
         json.dump(out, f, indent=2)

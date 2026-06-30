@@ -1,0 +1,37 @@
+userName: <username>
+accessKey: <access_key>
+# Edit these platforms depending on whether you are creating a new baseline
+# json file or running tests against an existing one. You can add new platforms
+# or copy the platform info from the "platformInfoYaml" field of the baseline you want to test against.
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: Chrome
+    browserVersion: 149.0
+  - os: Windows
+    osVersion: 11
+    browserName: Firefox
+    browserVersion: 152.0
+  - os: OS X
+    osVersion: Big Sur
+    browserName: Safari
+    browserVersion: 14.1
+  - deviceName: Samsung Galaxy S22 Ultra
+    osVersion: 12.0
+    browserName: Chrome
+    deviceOrientation: portrait
+  - deviceName: iPhone 14 Pro Max
+    osVersion: 16
+    browserName: safari
+    deviceOrientation: portrait
+buildName: browseraudit-regression-script
+projectName: BrowserAudit Regression Tests
+debug: false
+networkLogs: false
+consoleLogs: errors
+
+# For local regression testing
+acceptInsecureCerts: true
+browserstackLocal: true
+browserStackLocalOptions:
+  forceLocal: true
