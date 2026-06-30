@@ -11,6 +11,6 @@ with BrowserStackRun(driver) as run:
     results = fetch_results(id, passkey)
 
     # Writes the baseline results as a json file
-    key = generate_browser_key(driver)
+    key = generate_browser_key()
     store_baseline(key, results)
     print(f"Created baseline file for browser key={key}")

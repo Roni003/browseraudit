@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass
 
 import requests
+from browserstack_sdk import BrowserStackSdk
 
 URL_BASE = "https://browseraudit.com"
 BASELINE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "baselines")
@@ -38,17 +39,19 @@ def extract_id_and_passkey(test_report_link: str):
 def _slug(s):
     return re.sub(r"[^a-z0-9]+", "-", str(s).strip().lower()).strip("-")
 
-def generate_browser_key(driver, version_parts=2):
-    caps = driver.capabilities
-    name = caps.get("browserName", "unknown")
-    version = caps.get("browserVersion") or caps.get("version") or "0"
-    platform = caps.get("platformName") or caps.get("platform") or "unknown"
+def generate_browser_key():
+    platform = BrowserStackSdk.get_current_platform()
+    out = f""
 
-    # Truncate version to N components so auto-updating browsers
-    # (Chrome "120.0.6099.109") don't invalidate the baseline every patch.
-    version = ".".join(version.split(".")[:version_parts])
+    for key, val in platform.items():
+        # Truncate version to N components so auto-updating browsers
+        # (Chrome "120.0.6099.109") don't invalidate the baseline every patch.
+        if key == "version":
+            val = ".".join(val.split(".")[:2])
 
-    return f"{_slug(name)}-{_slug(platform)}-{_slug(version)}"
+        out += _slug(val) + "-"
+
+    return out.removesuffix("-")
 
 def store_baseline(browser_key: str, result: Result):
     os.makedirs(BASELINE_DIR, exist_ok=True)

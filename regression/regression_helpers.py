@@ -14,7 +14,7 @@ def parse_baseline(browser_key: str) -> Result:
 
 def compare_results(driver, baseline: Result, current: Result) -> bool:
     failed = _diff_test_results(baseline, current)
-    browser_key = generate_browser_key(driver)
+    browser_key = generate_browser_key()
     if len(failed) == 0:
         print(f"--- Passed regression test ({browser_key}) ---")
         return True
