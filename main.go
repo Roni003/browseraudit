@@ -102,6 +102,8 @@ func main() {
 	r.HandleFunc("/set_session_secure_cookie", SetSessionSecureCookieHandler)
 	r.HandleFunc("/get_session_secure_cookie", GetSessionSecureCookieHandler)
 	r.HandleFunc("/get_destroy_me", GetDestroyMeHandler)
+	r.HandleFunc("/cookie_prefix/set/{variant}", SetPrefixCookieHandler)
+	r.HandleFunc("/cookie_prefix/get/{variant}", GetPrefixCookieHandler)
 
 	r.HandleFunc("/set_referer", SetRefererHandler)
 	r.HandleFunc("/get_referer", GetRefererHandler)

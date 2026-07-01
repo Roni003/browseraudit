@@ -793,24 +793,22 @@ function sameSiteCookieTest(testID, shouldBeBlocked, policy, severity) {
   var cookieName = "samesite" + testID + new Date().getTime();
   var failMethod = severity === "warning" ? "WARNING" : "CRITICAL";
 
-  var test_template = function() {
+  var test_template = function () {
     var thisTest = this;
 
     var sessid = $.cookie("sessid");
 
     // 1: Set the cookie on browseraudit.org (cross-site, so browser stores it for .browseraudit.org)
     $("<img>", { src: "https://browseraudit.org/samesite/set/" + cookieName + "/" + policy + "?sessid=" + sessid })
-        .appendTo("div#sandbox")
-        .on("load error", function() {
-
-      // 2: Load an image cross-site from browseraudit.com to browseraudit.org.
-      // The browser applies the SameSite policy to decide whether to send the cookie.
-      $("<img>", { src: "https://browseraudit.org/samesite/save/" + cookieName + "?sessid=" + sessid })
+      .appendTo("div#sandbox")
+      .on("load error", function () {
+        // 2: Load an image cross-site from browseraudit.com to browseraudit.org.
+        // The browser applies the SameSite policy to decide whether to send the cookie.
+        $("<img>", { src: "https://browseraudit.org/samesite/save/" + cookieName + "?sessid=" + sessid })
           .appendTo("div#sandbox")
-          .on("load error", function() {
-
+          .on("load error", function () {
             // 3: Ask our own server what it received
-            $.get("/samesite/get/" + cookieName, function(result) {
+            $.get("/samesite/get/" + cookieName, function (result) {
               if (shouldBeBlocked) {
                 if (result === "none") {
                   thisTest.PASS("Cookie was not sent with the cross-site request.");
@@ -826,7 +824,7 @@ function sameSiteCookieTest(testID, shouldBeBlocked, policy, severity) {
               }
             });
           });
-    });
+      });
   };
 
   var test_source = test_template
@@ -835,7 +833,9 @@ function sameSiteCookieTest(testID, shouldBeBlocked, policy, severity) {
     .replace(/policy/g, '"' + policy + '"')
     .replace(/shouldBeBlocked/g, shouldBeBlocked)
     .replace(/failMethod/g, '"' + failMethod + '"');
-  test_template.toString = function () { return test_source; };
+  test_template.toString = function () {
+    return test_source;
+  };
   test_template.reportData = {};
   return test_template;
 }
@@ -910,6 +910,34 @@ var cookiesSecureScriptToServerHTTP = function (testID) {
           thisTest.PASS("The cookie was not sent to the server.");
         } else {
           thisTest.CRITICAL("The cookie was sent to the server.");
+        }
+      });
+    });
+  };
+
+  test_template.reportData = {};
+  return test_template;
+};
+
+// Cookies -> Cookie name prefixes
+var cookiePrefixTest = function (testID, variant, shouldBeAccepted) {
+  var test_template = function () {
+    var thisTest = this;
+    $.get("/cookie_prefix/set/" + variant, function () {
+      $.get("/cookie_prefix/get/" + variant, function (data) {
+        var stored = data !== "nil";
+        if (shouldBeAccepted) {
+          if (stored) {
+            thisTest.PASS("The cookie was accepted and returned to the server.");
+          } else {
+            thisTest.CRITICAL("The cookie was not accepted by the browser.");
+          }
+        } else {
+          if (stored) {
+            thisTest.CRITICAL("The cookie was accepted despite violating the prefix rules.");
+          } else {
+            thisTest.PASS("The cookie was correctly rejected by the browser.");
+          }
         }
       });
     });

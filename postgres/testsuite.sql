@@ -69,6 +69,7 @@ COPY public.category (id, parent, title, description, execute_order, live, in_de
 42	11	frame-ancestors	\N	17	t	t	\N
 43	20	Access-Control-Allow-Credentials	\N	5	t	t	\N
 44	25	SameSite attribute	<p>  When a cookie has the <em>SameSite</em> attribute set, a compliant browser will restrict whether that cookie is included in cross-site requests. This helps protect against cross-site request forgery (CSRF) attacks, where a malicious page tricks a user's browser into making an authenticated request to another site. The <em>SameSite</em> attribute has three values. Strict means the cookie is never sent on cross-site requests at all. Lax is a looser restriction: the cookie is withheld on cross-site subrequests (such as images or iframes) but is sent on top-level navigations. None opts out of the restriction entirely, but modern browsers require the Secure attribute to be set if the <em>SameSite</em> attribute is set to None. </p> <p> <em>SameSite</em> cookies are supported by all major browsers. </p> <p> We have five tests. The first checks that a <em>SameSite</em>=Strict cookie is not sent on a cross-site request. The second checks the same for a <em>SameSite</em>=Lax cookie on a cross-site subrequest (an image load, which is not a top-level navigation). The third checks that a <em>SameSite</em>=None cookie without the Secure flag is rejected by the browser rather than treated as having no <em>SameSite</em> restriction. The fourth checks that a <em>SameSite</em>=None; Secure cookie is correctly permitted on cross-site requests. The fifth checks that a cookie with no <em>SameSite</em> attribute at all defaults to Lax behaviour and is withheld from cross-site subrequests. </p>	3	t	t	\N
+45	25	Cookie name prefixes	<p>The <em>__Secure-</em> and <em>__Host-</em> cookie name prefixes let a server signal that a cookie must satisfy extra security constraints, and instruct a compliant browser to reject the cookie if those constraints are not met. A cookie whose name begins with <em>__Secure-</em> must carry the <em>Secure</em> attribute and be set over HTTPS. A cookie whose name begins with <em>__Host-</em> additionally must not carry a <em>Domain</em> attribute and must have its <em>Path</em> set to <span class="tt">/</span>, which locks the cookie to the exact host that set it and helps defend against cookie injection from subdomains.</p><p>Cookie name prefixes are supported by all major browsers.</p><p>We have six tests. The first checks that a correctly-formed <em>__Secure-</em> cookie is accepted. The second checks that a <em>__Secure-</em> cookie without the <em>Secure</em> attribute is rejected. The remaining four cover the <em>__Host-</em> prefix: a correctly-formed cookie is accepted, while cookies missing <em>Secure</em>, carrying a <em>Domain</em> attribute, or using a <em>Path</em> other than <span class="tt">/</span> are each rejected.</p>	4	t	t	\N
 \.
 
 
@@ -560,6 +561,12 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 477	SameSite=None without Secure is ignored	\N	block	warning	44	3	sameSiteCookieTest(477, true, "none-insecure", "warning")	t
 478	SameSite=None with Secure sent cross-site	\N	allow	warning	44	4	sameSiteCookieTest(478, false, "none", "warning")	t
 479	Cookie without SameSite attribute defaults to Lax (not sent cross-site)	\N	block	warning	44	5	sameSiteCookieTest(479, true, "default", "warning")	t
+480	__Secure- cookie with Secure attribute is accepted	\N	allow	critical	45	1	cookiePrefixTest(480, "secure-ok", true)	t
+481	__Secure- cookie without Secure attribute is rejected	\N	block	critical	45	2	cookiePrefixTest(481, "secure-nosecure", false)	t
+482	__Host- cookie with Secure, no Domain and Path / is accepted	\N	allow	critical	45	3	cookiePrefixTest(482, "host-ok", true)	t
+483	__Host- cookie without Secure attribute is rejected	\N	block	critical	45	4	cookiePrefixTest(483, "host-nosecure", false)	t
+484	__Host- cookie with a Domain attribute is rejected	\N	block	critical	45	5	cookiePrefixTest(484, "host-domain", false)	t
+485	__Host- cookie with a Path other than / is rejected	\N	block	critical	45	6	cookiePrefixTest(485, "host-path", false)	t
 \.
 
 

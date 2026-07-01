@@ -23,6 +23,8 @@ const REQUEST_SECURE_COOKIE_SETVAL = "881"
 const SESSION_SECURE_COOKIE_NAME = "sessionSecureCookie"
 const SESSION_SECURE_COOKIE_SETVAL = "415"
 
+const PREFIX_COOKIE_VALUE = "6767"
+
 func ClearCookiesHandler(w http.ResponseWriter, r *http.Request) {
 	DontCache(&w)
 
@@ -146,6 +148,7 @@ func GetDestroyMeHandler(w http.ResponseWriter, r *http.Request) {
 
 // Sets a cookie with a given SameSite policy
 func SetRequestSameSiteCookieHandler(w http.ResponseWriter, r *http.Request) {
+	DontCache(&w)
 	vars := mux.Vars(r)
 	name := vars["name"]
 	policy := vars["policy"]
@@ -207,4 +210,45 @@ func GetSessionSameSiteCookieHandler(w http.ResponseWriter, r *http.Request) {
 		val = "none"
 	}
 	template.HTMLEscape(w, []byte(val))
+}
+
+var cookiePrefixVariants = map[string]http.Cookie{
+	"secure-ok":       {Name: "__Secure-OK", Secure: true, Path: "/"},
+	"secure-nosecure": {Name: "__Secure-NonSecure", Secure: false, Path: "/"},
+	"host-ok":         {Name: "__Host-OK", Secure: true, Path: "/"},
+	"host-nosecure":   {Name: "__Host-NonSecure", Secure: false, Path: "/"},
+	"host-domain":     {Name: "__Host-Domain", Secure: true, Path: "/", Domain: "browseraudit.com"},
+	"host-path":       {Name: "__Host-InvalidPath", Secure: true, Path: "/cookie_prefix"},
+}
+
+func SetPrefixCookieHandler(w http.ResponseWriter, r *http.Request) {
+	DontCache(&w)
+
+	cookie, ok := cookiePrefixVariants[mux.Vars(r)["variant"]]
+	if !ok {
+		http.Error(w, "invalid variant", http.StatusBadRequest)
+		return
+	}
+
+	cookie.Value = PREFIX_COOKIE_VALUE
+	cookie.Expires = time.Now().Add(5 * time.Minute)
+	http.SetCookie(w, &cookie)
+	http.ServeFile(w, r, "./static/pixel.png")
+}
+
+func GetPrefixCookieHandler(w http.ResponseWriter, r *http.Request) {
+	DontCache(&w)
+
+	spec, ok := cookiePrefixVariants[mux.Vars(r)["variant"]]
+	if !ok {
+		http.Error(w, "invalid variant", http.StatusBadRequest)
+		return
+	}
+
+	c, err := r.Cookie(spec.Name)
+	if err == nil {
+		template.HTMLEscape(w, []byte(c.Value))
+	} else {
+		fmt.Fprintf(w, "nil")
+	}
 }
