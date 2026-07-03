@@ -213,16 +213,21 @@ func GetSessionSameSiteCookieHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 var cookiePrefixVariants = map[string]http.Cookie{
-	"secure-ok":       {Name: "__Secure-OK", Secure: true, Path: "/"},
-	"secure-nosecure": {Name: "__Secure-NonSecure", Secure: false, Path: "/"},
-	"host-ok":         {Name: "__Host-OK", Secure: true, Path: "/"},
-	"host-nosecure":   {Name: "__Host-NonSecure", Secure: false, Path: "/"},
-	"host-domain":     {Name: "__Host-Domain", Secure: true, Path: "/", Domain: "browseraudit.com"},
-	"host-path":       {Name: "__Host-InvalidPath", Secure: true, Path: "/cookie_prefix"},
-	"http-ok":         {Name: "__Http-OK", Secure: true, HttpOnly: true, Path: "/"},
-	"http-httponly":   {Name: "__Http-HttpOnly", Secure: false, HttpOnly: true, Path: "/"},
-	"http-secureonly": {Name: "__Http-SecureOnly", Secure: true, HttpOnly: false, Path: "/"},
-	"http-none":       {Name: "__Http-None", Secure: false, HttpOnly: false, Path: "/"},
+	"secure-ok":            {Name: "__Secure-OK", Secure: true, Path: "/"},
+	"secure-nosecure":      {Name: "__Secure-NonSecure", Secure: false, Path: "/"},
+	"host-ok":              {Name: "__Host-OK", Secure: true, Path: "/"},
+	"host-nosecure":        {Name: "__Host-NonSecure", Secure: false, Path: "/"},
+	"host-domain":          {Name: "__Host-Domain", Secure: true, Path: "/", Domain: "browseraudit.com"},
+	"host-path":            {Name: "__Host-InvalidPath", Secure: true, Path: "/cookie_prefix"},
+	"http-ok":              {Name: "__Http-OK", Secure: true, HttpOnly: true, Path: "/"},
+	"http-httponly":        {Name: "__Http-HttpOnly", Secure: false, HttpOnly: true, Path: "/"},
+	"http-secureonly":      {Name: "__Http-SecureOnly", Secure: true, HttpOnly: false, Path: "/"},
+	"http-none":            {Name: "__Http-None", Secure: false, HttpOnly: false, Path: "/"},
+	"hosthttp-ok":          {Name: "__Host-Http-OK", Secure: true, HttpOnly: true, Path: "/"},
+	"hosthttp-nonhttponly": {Name: "__Host-Http-NonHttpOnly", Secure: true, HttpOnly: false, Path: "/"},
+	"hosthttp-nosecure":    {Name: "__Host-Http-NonSecure", Secure: false, HttpOnly: true, Path: "/"},
+	"hosthttp-domain":      {Name: "__Host-Http-Domain", Secure: true, HttpOnly: true, Path: "/", Domain: "browseraudit.com"},
+	"hosthttp-path":        {Name: "__Host-Http-InvalidPath", Secure: true, HttpOnly: true, Path: "/cookie_prefix"},
 }
 
 func SetPrefixCookieHandler(w http.ResponseWriter, r *http.Request) {
