@@ -219,6 +219,10 @@ var cookiePrefixVariants = map[string]http.Cookie{
 	"host-nosecure":   {Name: "__Host-NonSecure", Secure: false, Path: "/"},
 	"host-domain":     {Name: "__Host-Domain", Secure: true, Path: "/", Domain: "browseraudit.com"},
 	"host-path":       {Name: "__Host-InvalidPath", Secure: true, Path: "/cookie_prefix"},
+	"http-ok":         {Name: "__Http-OK", Secure: true, HttpOnly: true, Path: "/"},
+	"http-httponly":   {Name: "__Http-HttpOnly", Secure: false, HttpOnly: true, Path: "/"},
+	"http-secureonly": {Name: "__Http-SecureOnly", Secure: true, HttpOnly: false, Path: "/"},
+	"http-none":       {Name: "__Http-None", Secure: false, HttpOnly: false, Path: "/"},
 }
 
 func SetPrefixCookieHandler(w http.ResponseWriter, r *http.Request) {

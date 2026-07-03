@@ -567,6 +567,10 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 483	__Host- cookie without Secure attribute is rejected	\N	block	critical	45	4	cookiePrefixTest(483, "host-nosecure", false)	t
 484	__Host- cookie with a Domain attribute is rejected	\N	block	critical	45	5	cookiePrefixTest(484, "host-domain", false)	t
 485	__Host- cookie with a Path other than / is rejected	\N	block	critical	45	6	cookiePrefixTest(485, "host-path", false)	t
+486	__Http- cookie with Secure and HttpOnly is accepted	\N	allow	warning	45	7	cookiePrefixTest(486, "http-ok", true)	t
+487	__Http- cookie with only HttpOnly is rejected	\N	block	warning	45	8	cookiePrefixTest(487, "http-httponly", false)	t
+488	__Http- cookie with only Secure is rejected	\N	block	warning	45	9	cookiePrefixTest(488, "http-secureonly", false)	t
+489	__Http- cookie without Secure or HttpOnly is rejected	\N	block	warning	45	10	cookiePrefixTest(489, "http-none", false)	t
 \.
 
 
