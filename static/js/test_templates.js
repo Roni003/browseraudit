@@ -789,13 +789,11 @@ var cookiesHttpOnlyScriptToServer = function (testID) {
   return test_template;
 };
 
-function sameSiteCookieTest(testID, shouldBeBlocked, policy, severity) {
+function sameSiteCookieTest(testID, shouldBeBlocked, policy) {
   var cookieName = "samesite" + testID + new Date().getTime();
-  var failMethod = severity === "warning" ? "WARNING" : "CRITICAL";
 
   var test_template = function () {
     var thisTest = this;
-
     var sessid = $.cookie("sessid");
 
     // 1: Set the cookie on browseraudit.org (cross-site, so browser stores it for .browseraudit.org)
@@ -813,13 +811,13 @@ function sameSiteCookieTest(testID, shouldBeBlocked, policy, severity) {
                 if (result === "none") {
                   thisTest.PASS("Cookie was not sent with the cross-site request.");
                 } else {
-                  thisTest[failMethod]("Cookie was sent with the cross-site request.");
+                  thisTest.FAIL("Cookie was sent with the cross-site request.");
                 }
               } else {
                 if (result !== "none") {
                   thisTest.PASS("Cookie was sent with the cross-site request.");
                 } else {
-                  thisTest[failMethod]("Cookie was not sent with the cross-site request.");
+                  thisTest.FAIL("Cookie was not sent with the cross-site request.");
                 }
               }
             });
@@ -831,8 +829,7 @@ function sameSiteCookieTest(testID, shouldBeBlocked, policy, severity) {
     .toString()
     .replace(/cookieName/g, '"' + cookieName + '"')
     .replace(/policy/g, '"' + policy + '"')
-    .replace(/shouldBeBlocked/g, shouldBeBlocked)
-    .replace(/failMethod/g, '"' + failMethod + '"');
+    .replace(/shouldBeBlocked/g, shouldBeBlocked);
   test_template.toString = function () {
     return test_source;
   };
