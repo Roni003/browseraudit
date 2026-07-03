@@ -88,11 +88,21 @@ var browserAuditTestFramework = (function () {
         PASS: function (reason) {
           markHierarchyNode(thisNode.nodeType, thisNode.id, testStartTime, ["pass", reason], testTimer);
         },
+        // Deprecated, use this.FAIL
         WARNING: function (reason) {
           markHierarchyNode(thisNode.nodeType, thisNode.id, testStartTime, ["warning", reason], testTimer);
         },
+        // Deprecated, use this.FAIL
         CRITICAL: function (reason) {
           markHierarchyNode(thisNode.nodeType, thisNode.id, testStartTime, ["critical", reason], testTimer);
+        },
+        // FAIL records a failure whose severity is taken from the test's
+        // failure_severity column, rather than being
+        // hard-coded in the test template. Defaults to critical for any value
+        // other than "warning". Use this instead of manually calling this.WARNING or this.CRITICAL, those are deprecated
+        FAIL: function (reason) {
+          var severity = thisNode.failureSeverity === "warning" ? "warning" : "critical";
+          markHierarchyNode(thisNode.nodeType, thisNode.id, testStartTime, [severity, reason], testTimer);
         },
         SKIP: function (reason) {
           markHierarchyNode(thisNode.nodeType, thisNode.id, testStartTime, ["skip", reason], testTimer);
@@ -278,6 +288,8 @@ var browserAuditTestFramework = (function () {
     // - timeout: if the test function uses timeouts, an integer representing
     //   the amount of time (in ms) that the timeout lasts; null if the test
     //   function does not use timeouts
+    // - failureSeverity: the failure severity of this test (warning or critical)
+    //
     // - testFunction: the function that will be executed; the function should
     //   return one of the following values, where "reason" is a string
     //   describing the reason the test ended in that state:
@@ -290,7 +302,7 @@ var browserAuditTestFramework = (function () {
     //   the function may also have a property "reportData", which is an object
     //   containing the following properties:
     //   TODO: Document reportData
-    addTest: function (testID, categoryID, title, behaviour, timeout, testFunction) {
+    addTest: function (testID, categoryID, title, behaviour, timeout, failureSeverity, testFunction) {
       // The test ID can't be used twice
       if (testTrail.hasOwnProperty(testID)) throw "A test with this ID has already been added to the test suite.";
 
@@ -310,6 +322,7 @@ var browserAuditTestFramework = (function () {
         title: title,
         behaviour: behaviour,
         timeout: timeout,
+        failureSeverity: failureSeverity,
         testFunction: testFunction,
       });
 

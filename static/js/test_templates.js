@@ -930,11 +930,11 @@ var cookiePrefixTest = function (testID, variant, shouldBeAccepted) {
           if (stored) {
             thisTest.PASS("The cookie was accepted and returned to the server.");
           } else {
-            thisTest.CRITICAL("The cookie was not accepted by the browser.");
+            thisTest.FAIL("The cookie was not accepted by the browser.");
           }
         } else {
           if (stored) {
-            thisTest.CRITICAL("The cookie was accepted despite violating the prefix rules.");
+            thisTest.FAIL("The cookie was accepted despite violating the prefix rules.");
           } else {
             thisTest.PASS("The cookie was correctly rejected by the browser.");
           }

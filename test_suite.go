@@ -63,24 +63,24 @@ func GenerateTestSuiteHandler(w http.ResponseWriter, r *http.Request) {
 			SELECT id FROM touched_child_categories
 		), hierarchy AS (
 			(
-				SELECT 'c' as type, id, title, description, NULL::test_behaviour AS behaviour, NULL::varchar AS test_function, NULL::smallint AS timeout, parent, array[execute_order] AS execute_order
+				SELECT 'c' as type, id, title, description, NULL::test_behaviour AS behaviour, NULL::varchar AS test_function, NULL::test_failure_severity AS failure_severity, NULL::smallint AS timeout, parent, array[execute_order] AS execute_order
 				FROM category
 				WHERE parent IS NULL AND live = true AND id IN (SELECT id FROM touched_categories)
 			) UNION (
-				SELECT e.type, e.id, e.title, e.description, e.behaviour, e.test_function, e.timeout, e.parent, (h.execute_order || e.execute_order)
+				SELECT e.type, e.id, e.title, e.description, e.behaviour, e.test_function, e.failure_severity, e.timeout, e.parent, (h.execute_order || e.execute_order)
 				FROM (
-					SELECT 't' as type, id, title, NULL::varchar AS description, behaviour, test_function, timeout, parent, execute_order
+					SELECT 't' as type, id, title, NULL::varchar AS description, behaviour, test_function, failure_severity, timeout, parent, execute_order
 					FROM test
 					WHERE live = true AND parent IN (SELECT id FROM touched_categories)
 					UNION
-					SELECT 'c' as type, id, title, description, NULL::test_behaviour AS behaviour, NULL::varchar AS test_function, NULL::smallint AS timeout, parent, execute_order
+					SELECT 'c' as type, id, title, description, NULL::test_behaviour AS behaviour, NULL::varchar AS test_function, NULL::test_failure_severity AS failure_severity, NULL::smallint AS timeout, parent, execute_order
 					FROM category
 					WHERE live = true AND id IN (SELECT id FROM touched_categories)
 				) e, hierarchy h
 				WHERE e.parent = h.id AND h.type = 'c'
 			)
 		)
-		SELECT type, id, title, description, behaviour, test_function, timeout, parent FROM hierarchy ORDER BY execute_order`, categoryIDs)
+		SELECT type, id, title, description, behaviour, test_function, failure_severity, timeout, parent FROM hierarchy ORDER BY execute_order`, categoryIDs)
 
 	if err != nil {
 		log.Fatal(err)
@@ -95,6 +95,7 @@ func GenerateTestSuiteHandler(w http.ResponseWriter, r *http.Request) {
 		var description sql.NullString
 		var behaviour sql.NullString
 		var testFunctionInvocation sql.NullString
+		var failureSeverity sql.NullString
 		var timeoutNullable sql.NullInt64
 		var parentNullable sql.NullInt64
 
@@ -113,7 +114,12 @@ func GenerateTestSuiteHandler(w http.ResponseWriter, r *http.Request) {
 		// categories in the JavaScript below)
 		testFunctionInvocation.String = ""
 
-		if err := rows.Scan(&rowType, &id, &title, &description, &behaviour, &testFunctionInvocation, &timeoutNullable, &parentNullable); err != nil {
+		// NULL failure_severity -> "critical" (only the case for categories,
+		// which doesn't matter because they aren't written out for categories in
+		// the JavaScript below; tests always have a non-NULL value)
+		failureSeverity.String = "critical"
+
+		if err := rows.Scan(&rowType, &id, &title, &description, &behaviour, &testFunctionInvocation, &failureSeverity, &timeoutNullable, &parentNullable); err != nil {
 			log.Fatal(err)
 		}
 
@@ -145,12 +151,13 @@ func GenerateTestSuiteHandler(w http.ResponseWriter, r *http.Request) {
 		} else { // rowType == "t": row represents a test
 			fmt.Fprintf(
 				w,
-				"browserAuditTestFramework.addTest(%d, %s, \"%s\", \"%s\", %s, %s);\n",
+				"browserAuditTestFramework.addTest(%d, %s, \"%s\", \"%s\", %s, \"%s\", %s);\n",
 				id,
 				parent,
 				strings.Replace(title, "\"", "\\\"", -1),
 				behaviour.String,
 				timeout,
+				failureSeverity.String,
 				testFunctionInvocation.String)
 		}
 	}
