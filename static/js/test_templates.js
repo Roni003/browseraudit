@@ -1130,6 +1130,9 @@ var corpTest = function (testID, baseURL, directive, shouldBeBlocked) {
   const urlstr = "https://" + baseURL + "/corp/" + directive;
 
   var reportData = {};
+  if (directive !== "none") {
+    reportData.ajaxHTTPHeader = "Cross-Origin-Resource-Policy: " + directive;
+  }
 
   const test_template = function () {
     const thisTest = this;
