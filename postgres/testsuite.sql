@@ -578,11 +578,12 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 493	__Host-Http- cookie with a Domain attribute is rejected	\N	block	warning	45	14	cookiePrefixTest(493, "hosthttp-domain", false)	t
 494	__Host-Http- cookie with a Path other than / is rejected	\N	block	warning	45	15	cookiePrefixTest(494, "hosthttp-path", false)	t
 495	CORP should allow same-origin load with same-origin directive	\N	allow	warning	46	1	corpTest(495, "browseraudit.com", "same-origin", false)	t
-496	CORP should block cross-origin load with same-origin directive	\N	block	warning	46	2	corpTest(496, "test.browseraudit.com", "same-origin", true)	t
-497	CORP should allow same-site load with same-site directive	\N	allow	warning	46	3	corpTest(497, "test.browseraudit.com", "same-site", false)	t
-498	CORP should block cross-site load with same-site directive	\N	block	warning	46	4	corpTest(498, "browseraudit.org", "same-site", true)	t
-499	CORP should allow cross-origin load	with cross-origin directive	\N	allow	warning	46	5	corpTest(499, "test.browseraudit.com", "cross-origin", false)	t
-500	CORP should allow cross-origin load with no directive given	\N	allow	warning	46	6	corpTest(500, "browseraudit.org", "none", false)	t
+496	CORP should block same-site load with same-origin directive	\N	block	warning	46	2	corpTest(496, "test.browseraudit.com", "same-origin", true)	t
+497	CORP should block cross-origin load with same-origin directive	\N	block	warning	46	3	corpTest(497, "browseraudit.org", "same-origin", true)	t
+498	CORP should allow same-site load with same-site directive	\N	allow	warning	46	4	corpTest(498, "test.browseraudit.com", "same-site", false)	t
+499	CORP should block cross-site load with same-site directive	\N	block	warning	46	5	corpTest(499, "browseraudit.org", "same-site", true)	t
+500	CORP should allow cross-origin load with cross-origin directive	\N	allow	warning	46	6	corpTest(500, "test.browseraudit.com", "cross-origin", false)	t
+501	CORP should allow cross-origin load with no directive given	\N	allow	warning	46	7	corpTest(501, "browseraudit.org", "none", false)	t
 \.
 
 

@@ -1137,15 +1137,15 @@ var corpTest = function (testID, baseURL, directive, shouldBeBlocked) {
     function handleResult(wasBlocked) {
       if (wasBlocked) {
         if (shouldBeBlocked) {
-          thisTest.PASS("The request was blocked");
+          thisTest.PASS("The request was blocked.");
         } else {
-          thisTest.FAIL("The request was blocked when it should not have been");
+          thisTest.FAIL("The request was blocked when it should not have been.");
         }
       } else {
         if (shouldBeBlocked) {
-          thisTest.FAIL("The request was not blocked, when it should have been");
+          thisTest.FAIL("The request was not blocked, when it should have been.");
         } else {
-          thisTest.PASS("The request was not blocked");
+          thisTest.PASS("The request was not blocked.");
         }
       }
     }
@@ -1161,7 +1161,7 @@ var corpTest = function (testID, baseURL, directive, shouldBeBlocked) {
           handleResult(true)
         });
     } else {
-       thisTest.SKIP("Fetch is not supported by this browser")
+       thisTest.SKIP("Fetch is not supported by this browser.")
     }
   };
 
