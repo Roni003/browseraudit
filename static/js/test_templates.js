@@ -1124,3 +1124,54 @@ var hstsTest = function (testID, hstsPolicy, headerOrigin, testOrigin, expectedP
 
   return test_template;
 };
+
+// Cross-Origin Resource Policy
+var corpTest = function (testID, baseURL, directive, shouldBeBlocked) {
+  const urlstr = "https://" + baseURL + "/corp/" + directive;
+
+  var reportData = {};
+
+  const test_template = function () {
+    const thisTest = this;
+
+    function handleResult(wasBlocked) {
+      if (wasBlocked) {
+        if (shouldBeBlocked) {
+          thisTest.PASS("The request was blocked");
+        } else {
+          thisTest.FAIL("The request was blocked when it should not have been");
+        }
+      } else {
+        if (shouldBeBlocked) {
+          thisTest.FAIL("The request was not blocked, when it should have been");
+        } else {
+          thisTest.PASS("The request was not blocked");
+        }
+      }
+    }
+
+    // Check if fetch is supported
+    if (window.fetch) {
+      // no-cors mode simulates a subresource fetch, same as <img> // TODO: confirm this?
+      fetch(urlstr, { mode: "no-cors", cache: "no-store" })
+        .then(function () {
+          handleResult(false)
+        })
+        .catch(function () {
+          handleResult(true)
+        });
+    } else {
+       thisTest.SKIP("Fetch is not supported by this browser")
+    }
+  };
+
+  var test_source = test_template
+      .toString()
+      .replace("urlstr", '"' + urlstr + '"');
+  test_template.toString = function () {
+    return test_source;
+  };
+  test_template.reportData = reportData;
+
+  return test_template;
+};

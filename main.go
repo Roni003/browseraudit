@@ -144,6 +144,8 @@ func main() {
 	r.HandleFunc("/cors/exposed-headers/{headersBase64}", CorsExposedHeadersHandler)
 	r.HandleFunc("/cors/allow-credentials/{originBase64}/{credentialsBase64}", CorsAllowCredentialsHandler)
 
+	r.HandleFunc("/corp/{directive}", CorpHandler)
+
 	r.HandleFunc("/results/{id:[0-9]+}/{passkey:[0-9a-f]+}", ResultsPageHandler)
 	r.HandleFunc("/suite_execution/get/{id:[0-9]+}/{passkey:[0-9a-f]+}", GetSuiteExecutionHandler)
 	r.HandleFunc("/suite_execution/json/{id:[0-9]+}/{passkey:[0-9a-f]+}", GetSuiteExecutionJSONHandler)
