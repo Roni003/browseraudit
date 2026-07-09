@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
 	"html/template"
@@ -14,6 +17,70 @@ import (
 type CSPTemplate struct {
 	SessionID    string
 	CookieDomain string
+}
+
+// cspHashTokenRe matches placeholders of the form sha256-{script}, sha384-{style},
+// etc. in a CSP policy. These are replaced at serve time with the digest computed
+// over the exact bytes of the corresponding inline element, so the header hash can
+// never drift from the fixture that is actually served.
+var cspHashTokenRe = regexp.MustCompile(`(sha256|sha384|sha512)-\{(script|style)\}`)
+var cspInlineScriptRe = regexp.MustCompile(`(?is)<script([^>]*)>(.*?)</script>`)
+var cspInlineStyleRe = regexp.MustCompile(`(?is)<style[^>]*>(.*?)</style>`)
+
+// renderCSPFixture renders ./csp/{id}.html through the template engine exactly as
+// CSPServeFile does, returning the bytes that will be sent to the browser.
+func renderCSPFixture(id, sessionID, cookieDomain string) ([]byte, error) {
+	t, err := template.ParseFiles("./csp/" + id + ".html")
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = t.Execute(&buf, &CSPTemplate{SessionID: sessionID, CookieDomain: cookieDomain})
+	return buf.Bytes(), err
+}
+
+// returns the exact text content of the first inline <style> / <script> without a src attribute,
+// in the given HTML. This is the byte sequence the browser hashes when running the CSP check
+func inlineContent(html []byte, element string) ([]byte, bool) {
+	if element == "style" {
+		m := cspInlineStyleRe.FindSubmatch(html)
+		if m == nil {
+			return nil, false
+		}
+		return m[1], true
+	}
+	for _, m := range cspInlineScriptRe.FindAllSubmatch(html, -1) {
+		if !bytes.Contains(m[1], []byte("src")) { // skip external scripts
+			return m[2], true
+		}
+	}
+	return nil, false
+}
+
+// injectCSPHashes replaces every sha*-{script}/{style} token in a CSP policy with
+// the base64 encoded hash of the corresponding inline element
+func injectCSPHashes(policy string, rendered []byte) string {
+	return cspHashTokenRe.ReplaceAllStringFunc(policy, func(token string) string {
+		parts := cspHashTokenRe.FindStringSubmatch(token)
+		algo, element := parts[1], parts[2]
+		content, ok := inlineContent(rendered, element)
+		if !ok {
+			return token
+		}
+		var digest []byte
+		switch algo {
+		case "sha256":
+			s := sha256.Sum256(content)
+			digest = s[:]
+		case "sha384":
+			s := sha512.Sum384(content)
+			digest = s[:]
+		case "sha512":
+			s := sha512.Sum512(content)
+			digest = s[:]
+		}
+		return algo + "-" + base64.StdEncoding.EncodeToString(digest)
+	})
 }
 
 func CSPServeHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +99,23 @@ func CSPServeHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 
+		policyStr := string(policy)
+
+		// If the policy contains sha*-{script}/{style} placeholders, compute the
+		// hash from the bytes we are about to serve and inject them into the CSP header
+		if cspHashTokenRe.MatchString(policyStr) {
+			cookieDomain := ""
+			if r.Form["cookieDomain"] != nil && r.Form["cookieDomain"][0] != "" {
+				cookieDomain = r.Form["cookieDomain"][0]
+			}
+			rendered, err := renderCSPFixture(id, session.Id, cookieDomain)
+			if err != nil {
+				log.Println(err)
+			} else {
+				policyStr = injectCSPHashes(policyStr, rendered)
+			}
+		}
+
 		// Add Report-To header and required CORS headers for CSP tests related to Reporting API
 		if id == "267" {
 			w.Header().Set("Reporting-Endpoints", `endpoint-1="https://browseraudit.com/csp/pass/267/emptyhtml"`)
@@ -41,9 +125,10 @@ func CSPServeHandler(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		}
 
-		w.Header().Set("Content-Security-Policy", string(policy))
+		w.Header().Set("Content-Security-Policy", policyStr)
 	}
 
+	// For the CSP nonce & hash tests
 	// If there is a "defaultResult" parameter in the query string, set the
 	// default result for this CSP test in the session data
 	if r.Form["defaultResult"] != nil && r.Form["defaultResult"][0] != "" {
