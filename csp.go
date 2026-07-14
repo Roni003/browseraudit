@@ -23,6 +23,11 @@ type CSPTemplate struct {
 // etc. in a CSP policy. These are replaced at serve time with the digest computed
 // over the exact bytes of the corresponding inline element, so the header hash can
 // never drift from the fixture that is actually served.
+//
+// Also, if manually adding the hash to the function call in the db entry, for example when testing
+// an inline event-handler script (e.g. onload) rather than a <script> or <style> element,
+// we can use this bash command to get the digest for adding new tests in the future:
+// printf "%s" "<script_content>" | openssl dgst -sha256 -binary | base64
 var cspHashTokenRe = regexp.MustCompile(`(sha256|sha384|sha512)-\{(script|style)\}`)
 var cspInlineScriptRe = regexp.MustCompile(`(?is)<script([^>]*)>(.*?)</script>`)
 var cspInlineStyleRe = regexp.MustCompile(`(?is)<style[^>]*>(.*?)</style>`)
