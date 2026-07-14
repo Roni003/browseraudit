@@ -232,7 +232,11 @@ var browserAuditUI = (function () {
             if (nodeId) {
               var hasChildren = categoryTreeTable.find(".treegrid-parent-" + nodeId[1]).length > 0;
               if (!hasChildren) {
-                row.find(".treegrid-expander").attr("tabindex", "-1").css("visibility", "hidden").attr("aria-hidden", "true");
+                row
+                  .find(".treegrid-expander")
+                  .attr("tabindex", "-1")
+                  .css("visibility", "hidden")
+                  .attr("aria-hidden", "true");
               }
             }
           }
@@ -284,54 +288,57 @@ var browserAuditUI = (function () {
           }
 
           // Add the new message
-            notificationBarTextElement.append(message);
+          notificationBarTextElement.append(message);
 
-            // By default allow clicks to pass through the notification bar so
-            // underlying header/navbar links remain usable. If an action is
-            // provided, wrap the visible message into a small action button that
-            // receives pointer events while the rest of the bar remains
-            // pointer-events:none (so clicks pass through to underlying page).
+          // By default allow clicks to pass through the notification bar so
+          // underlying header/navbar links remain usable. If an action is
+          // provided, wrap the visible message into a small action button that
+          // receives pointer events while the rest of the bar remains
+          // pointer-events:none (so clicks pass through to underlying page).
+          notificationBarElement.css("pointer-events", "none");
+
+          // Need this to make the permanent results link in the notification bar clickable
+          notificationBarTextElement.find("a").css("pointer-events", "auto");
+
+          // Remove any previous keyboard handler on the container
+          notificationBarElement.off("keydown.notificationBar");
+
+          // If an action is provided, make only the action element focusable
+          if (onclickFunction !== null) {
+            // Move existing HTML content into a small action button so only
+            // the button captures pointer events.
+            var contentHtml = notificationBarTextElement.html();
+            notificationBarTextElement.empty();
+            var actionButton = $("<button>", {
+              type: "button",
+              class: "notification-action",
+              html: contentHtml,
+            });
+
+            // Make the button keyboard accessible and wire the handler
+            actionButton.attr("tabindex", "0");
+            actionButton.on("click", function (e) {
+              try {
+                onclickFunction.apply(this, [e]);
+              } catch (ex) {}
+            });
+            actionButton.on("keydown", function (e) {
+              var code = e.which || e.keyCode;
+              if (code === 13 || code === 32) {
+                e.preventDefault();
+                $(this).trigger("click");
+              }
+            });
+
+            notificationBarTextElement.append(actionButton);
+
+            // Container should not intercept pointer events; let only the
+            // action button receive them.
             notificationBarElement.css("pointer-events", "none");
+            actionButton.css("pointer-events", "auto");
 
-            // Remove any previous keyboard handler on the container
-            notificationBarElement.off("keydown.notificationBar");
-
-            // If an action is provided, make only the action element focusable
-            if (onclickFunction !== null) {
-              // Move existing HTML content into a small action button so only
-              // the button captures pointer events.
-              var contentHtml = notificationBarTextElement.html();
-              notificationBarTextElement.empty();
-              var actionButton = $("<button>", {
-                type: "button",
-                class: "notification-action",
-                html: contentHtml,
-              });
-
-              // Make the button keyboard accessible and wire the handler
-              actionButton.attr("tabindex", "0");
-              actionButton.on("click", function (e) {
-                try {
-                  onclickFunction.apply(this, [e]);
-                } catch (ex) {}
-              });
-              actionButton.on("keydown", function (e) {
-                var code = e.which || e.keyCode;
-                if (code === 13 || code === 32) {
-                  e.preventDefault();
-                  $(this).trigger("click");
-                }
-              });
-
-              notificationBarTextElement.append(actionButton);
-
-              // Container should not intercept pointer events; let only the
-              // action button receive them.
-              notificationBarElement.css("pointer-events", "none");
-              actionButton.css("pointer-events", "auto");
-
-              notificationBarElement.addClass("navbar-clickable");
-            }
+            notificationBarElement.addClass("navbar-clickable");
+          }
 
           // Show the notification bar again
           notificationBarContainerElement.slideDown(300);
