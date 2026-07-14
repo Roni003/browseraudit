@@ -609,6 +609,9 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 521	onload blocked with unsafe-hashes and no matching hash	\N	block	warning	49	8	cspTest(521, 293, "default-src 'none'; script-src 'unsafe-hashes' 'sha256-AHjPTQIXJaHRXq0qBw+J3E2milLHt2FTk4+95Q87zkA='", true, { timeout: 300 })	t
 522	onload blocked without unsafe-hashes and a matching hash	\N	block	warning	49	9	cspTest(522, 294, "default-src 'none'; script-src 'sha256-LHvfXNsnM5KLf3agzy+o3cHhv1jm9wReJ7YDnBAgd0s='", true, { timeout: 300 })	t
 523	onload allowed with unsafe-hashes and a matching hash	\N	allow	warning	49	10	cspTest(523, 295, "default-src 'none'; script-src 'unsafe-hashes' 'sha256-oM7hsH0I21ZkfIofvmIBu9In3Jt4NHKRbLdi5RAf0rk='", false, { timeout: 300 })	t
+524	inline style attribute blocked with unsafe-hashes and no matching hash	\N	block	warning	49	11	cspTest(524, 296, "default-src 'none'; style-src 'unsafe-hashes' 'sha256-AHjPTQIXJaHRXq0qBw+J3E2milLHt2FTk4+95Q87zkA='; img-src 'self'", true, { timeout: 300 })	t
+525	inline style attribute blocked without unsafe-hashes and a matching hash	\N	block	warning	49	12	cspTest(525, 297, "default-src 'none'; style-src 'sha256-6uDmaZv+U7osLfJ/cNEA9wkSPbXv2Qdoo32K+mPFAAI='; img-src 'self'", true, { timeout: 300 })	t
+526	inline style attribute allowed with unsafe-hashes and a matching hash	\N	allow	warning	49	13	cspTest(526, 298, "default-src 'none'; style-src 'unsafe-hashes' 'sha256-Vrxy51YoDaq6plp+NFNo5X9iWCSxe0KdK70mxVkjLwc='; img-src 'self'", false, { timeout: 300 })	t
 \.
 
 
