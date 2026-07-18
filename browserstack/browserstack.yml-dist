@@ -1,6 +1,7 @@
 userName: <username>
 accessKey: <access_key>
 # These are some examples taken from the BrowserStack documentation, change them to your liking
+# For help with platform names & info: https://www.browserstack.com/docs/automate/capabilities
 platforms:
   - deviceName: iPhone 14 Pro Max
     osVersion: 16

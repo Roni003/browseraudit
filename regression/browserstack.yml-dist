@@ -3,6 +3,7 @@ accessKey: <access_key>
 # Edit these platforms depending on whether you are creating a new baseline
 # json file or running tests against an existing one. You can add new platforms
 # or copy the platform info from the "platformInfoYaml" field of the baseline you want to test against.
+# For help with platform names & info: https://www.browserstack.com/docs/automate/capabilities
 platforms:
   - os: Windows
     osVersion: 11

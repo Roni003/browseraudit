@@ -1127,15 +1127,15 @@ var hstsTest = function (testID, hstsPolicy, headerOrigin, testOrigin, expectedP
 
 // Cross-Origin Resource Policy
 var corpTest = function (testID, baseURL, directive, shouldBeBlocked) {
-  const urlstr = "https://" + baseURL + "/corp/" + directive;
+  var urlstr = "https://" + baseURL + "/corp/" + directive;
 
   var reportData = {};
   if (directive !== "none") {
     reportData.ajaxHTTPHeader = "Cross-Origin-Resource-Policy: " + directive;
   }
 
-  const test_template = function () {
-    const thisTest = this;
+  var test_template = function () {
+    var thisTest = this;
 
     function handleResult(wasBlocked) {
       if (wasBlocked) {
