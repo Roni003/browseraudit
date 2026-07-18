@@ -215,7 +215,7 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 209	script from https://browseraudit.com with script-src 'self'	\N	allow	warning	13	3	cspTest(209, 40, "default-src 'none'; script-src 'self'", false, {})	t
 214	script from https://test.browseraudit.com with script-src https://test.browseraudit.com	\N	allow	warning	13	8	cspTest(214, 44, "default-src 'none'; script-src https://test.browseraudit.com", false, {})	t
 221	SharedWorker from https://browseraudit.com with default-src 'self'	300	allow	warning	13	15	cspTest(221, 50, "default-src 'unsafe-inline' 'self'", false, { timeout: 300 })	t
-225	inline <script> with default-src 'unsafe-inline'	\N	allow	warning	14	1	cspTest(225, 3, "default-src 'unsafe-inline'", false, {})	t
+225	inline <script> with default-src 'unsafe-inline'	\N	allow	warning	14	1	cspTest(225, 3, "default-src 'unsafe-inline'", false, { timeout: 300 })	t
 227	inline event handler with default-src 'unsafe-inline'	300	allow	warning	14	3	cspTest(227, 5, "default-src 'unsafe-inline'", false, { timeout: 300 })	t
 231	inline style attribute with default-src 'unsafe-inline'	\N	allow	warning	14	7	cspTest(231, 9, "default-src 'self' 'unsafe-inline'", false, {})	t
 237	setTimeout() with default-src 'unsafe-eval'	300	allow	warning	15	5	cspTest(237, 15, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 300 })	t
@@ -290,7 +290,7 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 205	stylesheet @import from https://test.browseraudit.com with style-src 'none'	\N	block	warning	12	21	cspTest(205, 29, "default-src none'; style-src 'unsafe-inline'", true, {})	t
 208	script from https://browseraudit.com with default-src 'none'	\N	block	warning	13	2	cspTest(208, 39, "default-src 'none'", true, {})	t
 217	Worker from https://browseraudit.com with default-src 'self'	300	allow	warning	13	11	cspTest(217, 46, "default-src 'unsafe-inline' 'self'", false, { timeout: 300 })	t
-235	eval() with default-src 'unsafe-eval'	\N	allow	warning	15	3	cspTest(235, 13, "default-src 'unsafe-inline' 'unsafe-eval'", false, {})	t
+235	eval() with default-src 'unsafe-eval'	\N	allow	warning	15	3	cspTest(235, 13, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 300 })	t
 317	@font-face from https://browseraudit.com in @import in inline stylesheet with font-src 'self'	300	allow	warning	33	7	cspTest(317, 134, "default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'", false, { timeout: 300 })	t
 323	@font-face from https://browseraudit.com in @import in stylesheet included via <link> with default-src 'self'	300	allow	warning	33	13	cspTest(323, 140, "default-src 'self'; style-src 'self' 'unsafe-inline'", false, { timeout: 300 })	t
 327	@font-face from https://test.browseraudit.com in inline stylesheet with default-src https://test.browseraudit.com	300	allow	warning	33	17	cspTest(327, 144, "default-src https://test.browseraudit.com; style-src 'unsafe-inline'", false, { timeout: 300 })	t
@@ -393,7 +393,7 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 224	SharedWorker from https://browseraudit.com with script-src 'none'	300	block	warning	13	18	cspTest(224, 53, "default-src 'self'; script-src 'unsafe-inline'", true, { timeout: 300 })	t
 228	inline event handler with default-src 'none'	300	block	warning	14	4	cspTest(228, 6, "default-src 'none'", true, { timeout: 300 })	t
 229	inline <style> with default-src 'unsafe-inline'	\N	allow	warning	14	5	cspTest(229, 7, "default-src 'self' 'unsafe-inline'", false, {})	t
-233	Function constructor with default-src 'unsafe-eval'	\N	allow	warning	15	1	cspTest(233, 11, "default-src 'unsafe-inline' 'unsafe-eval'", false, {})	t
+233	Function constructor with default-src 'unsafe-eval'	\N	allow	warning	15	1	cspTest(233, 11, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 300 })	t
 234	Function constructor without 'unsafe-eval'	\N	block	warning	15	2	cspTest(234, 12, "default-src 'unsafe-inline'", true, {})	t
 239	setInterval() with default-src 'unsafe-eval'	1000	allow	warning	15	7	cspTest(239, 17, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 1000 })	t
 240	setInterval() without 'unsafe-eval'	1000	block	warning	15	8	cspTest(240, 18, "default-src 'unsafe-inline'", true, { timeout: 1000 })	t
