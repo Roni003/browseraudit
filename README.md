@@ -133,7 +133,7 @@ To check for linting issues with Go code, you can use the command:
 
 `$(go env GOPATH)/bin/staticcheck`
 
-### Security Recommendation
+### Security Notice
 
 We use [jQuery](https://jquery.com/) for ease of DOM manipulation. However, the version of jQuery used by this project (1.11.3)
 has a vulnerability ([CVE-2020-11023](https://nvd.nist.gov/vuln/detail/cve-2020-11023)), where passing \<option\> elements into
