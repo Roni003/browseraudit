@@ -133,6 +133,14 @@ To check for linting issues with Go code, you can use the command:
 
 `$(go env GOPATH)/bin/staticcheck`
 
+### Security Notice
+
+We use [jQuery](https://jquery.com/) for ease of DOM manipulation. However, the version of jQuery used by this project (1.11.3)
+has a vulnerability ([CVE-2020-11023](https://nvd.nist.gov/vuln/detail/cve-2020-11023)), where passing \<option\> elements into
+jQuery's DOM manipulation methods may result in XSS. So when contributing to the project, please keep this in mind.
+
+The reason we have not upgraded jQuery to a newer version is to ensure BrowserAudit can still support legacy browsers that newer jQuery versions have dropped support for.
+
 ## License and Attribution
 
 ### License
