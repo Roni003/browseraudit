@@ -16,7 +16,9 @@ BASE_URL = "https://browseraudit.com"
 # trusts the self signed BrowserAudit certificate on the local website.
 # This works only for the domain the selenium driver accesses (the base URL), but not
 # on cross origin domains during the test run. So we need to load all of the other domains
-# with driver.get() so they are all trusted by the browser before we start the test execution
+# with driver.get() so they are all trusted by the browser before we start the test execution.
+# Priming is only needed for a local deployment; against a host with publicly trusted
+# certificates pass cross_origins=() to skip it.
 CROSS_ORIGINS = (
     "https://test.browseraudit.com",
     "https://browseraudit.org",
@@ -32,9 +34,13 @@ IGNORED_EXCEPTIONS = (
 
 class BrowserStackRun:
 
-    def __init__(self, driver, timeout=400):
+    def __init__(self, driver, base_url=BASE_URL, cross_origins=CROSS_ORIGINS, timeout=400):
         self.driver = driver
         self.timeout = timeout
+        self.base_url = base_url
+        # The other origins the suite talks to while running against base_url.
+        # Pass an empty tuple to skip certificate priming entirely.
+        self.cross_origins = cross_origins
 
     def __enter__(self):
         return self
@@ -52,7 +58,7 @@ class BrowserStackRun:
         return False
 
     def prime_cross_origin_certs(self):
-        for origin in CROSS_ORIGINS:
+        for origin in self.cross_origins:
             self.driver.get(origin)
 
     def select_categories(self, category_ids=None):
@@ -99,8 +105,11 @@ class BrowserStackRun:
 
     def run(self, category_ids=None) -> str:
         """Drive a full run and return the permanent results link"""
+
+        # For local regression testing, we need to request each cross origin so the browser trusts its certificate
         self.prime_cross_origin_certs()
-        self.driver.get(BASE_URL)
+
+        self.driver.get(self.base_url)
         self.select_categories(category_ids)
         self.start()
         return self.wait_for_report_link()
