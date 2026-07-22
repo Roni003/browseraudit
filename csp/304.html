@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <script>
+    // No nonce or hash in the policy, even though 'unsafe-inline' is present,
+    // strict-dynamic should override it and block this
+    new Image().src = '/csp/fail/304/png';
+  </script>
+</body>
+</html>

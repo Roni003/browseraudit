@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <script nonce="correct-nonce">
+    // Should be allowed with strict-dynamic since this is not a parser inserted script element
+    var s = document.createElement('script');
+    s.src = '/csp/pass/299/emptyjs';
+    document.head.appendChild(s);
+  </script>
+</body>
+</html>

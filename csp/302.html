@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <!--
+    Parser inserted external script with no nonce. Even though 'self' is present in the
+    policy, strict-dynamic causes host and 'self' source expressions to be ignored, so
+    this script should be blocked.
+  -->
+  <script src="/csp/fail/302/emptyjs"></script>
+</body>
+</html>

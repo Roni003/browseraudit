@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <script nonce="correct-nonce">
+    // Trusted by nonce. strict-dynamic propagates trust: the script this creates is allowed,
+    // and that script in turn creates another script which should also be allowed.
+    var s = document.createElement('script');
+    s.src = '/csp/serve/305/chainjs';
+    document.head.appendChild(s);
+  </script>
+</body>
+</html>

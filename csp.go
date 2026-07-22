@@ -205,6 +205,14 @@ func CSPServeFile(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/javascript")
 		fmt.Fprintln(w, "// Empty JS")
 
+	// chainjs returns a script that creates a non parser inserted
+	// script pointing at this test's pass endpoint. It is used by the strict-dynamic
+	// propagated trust test: a nonce trusted script loads chainjs, and chainjs must be
+	// able to load one more script for the propagated trust to count as transitive.
+	case file == "chainjs":
+		w.Header().Set("Content-Type", "text/javascript")
+		fmt.Fprintf(w, "var s = document.createElement('script'); s.src = '/csp/pass/%s/emptyjs'; document.head.appendChild(s);\n", id)
+
 	case file == "emptyjson":
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintln(w, "{}")

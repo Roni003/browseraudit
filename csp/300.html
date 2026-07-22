@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <script nonce="correct-nonce">
+    // Should be with strict-dynamic blocked since this is a parser inserted script element
+    document.write('<scr' + 'ipt src="/csp/fail/300/emptyjs"></scr' + 'ipt>');
+  </script>
+</body>
+</html>
