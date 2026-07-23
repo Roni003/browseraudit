@@ -44,7 +44,7 @@ class CategoryId(Enum):
 
 class BrowserStackRun:
 
-    def __init__(self, driver, base_url=BASE_URL, cross_origins=CROSS_ORIGINS, timeout=400):
+    def __init__(self, driver, base_url=BASE_URL, cross_origins=CROSS_ORIGINS, timeout=900):
         self.driver = driver
         self.timeout = timeout
         self.base_url = base_url

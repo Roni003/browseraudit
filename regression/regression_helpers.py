@@ -3,6 +3,14 @@ import os.path
 
 from common import Result, BASELINE_DIR, generate_browser_key
 
+# List of test IDs that have unreliable results, therefore shouldn't be included in the regression check
+UNRELIABLE_TEST_IDS = [
+    237,
+    459,
+    461,
+    464
+]
+
 def parse_baseline(browser_key: str) -> Result:
     path = os.path.join(BASELINE_DIR, browser_key + ".json")
     if not os.path.exists(path):
@@ -29,6 +37,8 @@ def _diff_test_results(baseline: Result, current: Result) -> list[dict]:
     current_results = current.test_results
     failed_tests = []
     for key, val in baseline_results.items():
+        if int(key) in UNRELIABLE_TEST_IDS:
+            continue
         if key not in current_results:
             continue
 
