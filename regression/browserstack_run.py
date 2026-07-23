@@ -1,4 +1,5 @@
 import json
+from enum import Enum
 
 from selenium.common import (
     NoSuchElementException,
@@ -31,6 +32,15 @@ IGNORED_EXCEPTIONS = (
     NoSuchFrameException,
     StaleElementReferenceException,
 )
+
+# IDs for the CSS selector to pick specific test categories
+class CategoryId(Enum):
+    COOKIES = 25
+    SOP = 1
+    CSP = 11
+    CORS = 20
+    REQUEST_HEADERS = 28
+    RESPONSE_HEADERS = 30
 
 class BrowserStackRun:
 
