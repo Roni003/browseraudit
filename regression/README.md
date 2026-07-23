@@ -18,6 +18,7 @@ BrowserAudit codebase locally, before pushing the changes to the production serv
 - Additional information on configuring `browserstack.yml` can be found here: https://www.browserstack.com/docs/
 - Ensure that you are currently running the BrowserAudit server locally (consult the README in the root directory), as the tests will be run against your local instance of BrowserAudit, not the production server. 
 This means any changes you make to the BrowserAudit codebase locally will be reflected in the test results.
+- Navigate into the `/regression` directory before executing the following commands.
 
 ## Baselines
 A baseline is a snapshot of test results and metadata for a test suite execution on a specific platform and browser. 
