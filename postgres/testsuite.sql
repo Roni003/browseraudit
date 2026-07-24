@@ -216,7 +216,7 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 209	script from https://browseraudit.com with script-src 'self'	\N	allow	warning	13	3	cspTest(209, 40, "default-src 'none'; script-src 'self'", false, {})	t
 214	script from https://test.browseraudit.com with script-src https://test.browseraudit.com	\N	allow	warning	13	8	cspTest(214, 44, "default-src 'none'; script-src https://test.browseraudit.com", false, {})	t
 221	SharedWorker from https://browseraudit.com with default-src 'self'	300	allow	warning	13	15	cspTest(221, 50, "default-src 'unsafe-inline' 'self'", false, { timeout: 300 })	t
-225	inline <script> with default-src 'unsafe-inline'	\N	allow	warning	14	1	cspTest(225, 3, "default-src 'unsafe-inline'", false, { timeout: 300 })	t
+225	inline <script> with default-src 'unsafe-inline'	300	allow	warning	14	1	cspTest(225, 3, "default-src 'unsafe-inline'", false, { timeout: 300 })	t
 227	inline event handler with default-src 'unsafe-inline'	300	allow	warning	14	3	cspTest(227, 5, "default-src 'unsafe-inline'", false, { timeout: 300 })	t
 231	inline style attribute with default-src 'unsafe-inline'	\N	allow	warning	14	7	cspTest(231, 9, "default-src 'self' 'unsafe-inline'", false, {})	t
 237	setTimeout() with default-src 'unsafe-eval'	300	allow	warning	15	5	cspTest(237, 15, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 300 })	t
@@ -291,7 +291,7 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 205	stylesheet @import from https://test.browseraudit.com with style-src 'none'	\N	block	warning	12	21	cspTest(205, 29, "default-src none'; style-src 'unsafe-inline'", true, {})	t
 208	script from https://browseraudit.com with default-src 'none'	\N	block	warning	13	2	cspTest(208, 39, "default-src 'none'", true, {})	t
 217	Worker from https://browseraudit.com with default-src 'self'	300	allow	warning	13	11	cspTest(217, 46, "default-src 'unsafe-inline' 'self'", false, { timeout: 300 })	t
-235	eval() with default-src 'unsafe-eval'	\N	allow	warning	15	3	cspTest(235, 13, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 300 })	t
+235	eval() with default-src 'unsafe-eval'	300	allow	warning	15	3	cspTest(235, 13, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 300 })	t
 317	@font-face from https://browseraudit.com in @import in inline stylesheet with font-src 'self'	300	allow	warning	33	7	cspTest(317, 134, "default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'", false, { timeout: 300 })	t
 323	@font-face from https://browseraudit.com in @import in stylesheet included via <link> with default-src 'self'	300	allow	warning	33	13	cspTest(323, 140, "default-src 'self'; style-src 'self' 'unsafe-inline'", false, { timeout: 300 })	t
 327	@font-face from https://test.browseraudit.com in inline stylesheet with default-src https://test.browseraudit.com	300	allow	warning	33	17	cspTest(327, 144, "default-src https://test.browseraudit.com; style-src 'unsafe-inline'", false, { timeout: 300 })	t
@@ -394,7 +394,7 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 224	SharedWorker from https://browseraudit.com with script-src 'none'	300	block	warning	13	18	cspTest(224, 53, "default-src 'self'; script-src 'unsafe-inline'", true, { timeout: 300 })	t
 228	inline event handler with default-src 'none'	300	block	warning	14	4	cspTest(228, 6, "default-src 'none'", true, { timeout: 300 })	t
 229	inline <style> with default-src 'unsafe-inline'	\N	allow	warning	14	5	cspTest(229, 7, "default-src 'self' 'unsafe-inline'", false, {})	t
-233	Function constructor with default-src 'unsafe-eval'	\N	allow	warning	15	1	cspTest(233, 11, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 300 })	t
+233	Function constructor with default-src 'unsafe-eval'	300	allow	warning	15	1	cspTest(233, 11, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 300 })	t
 234	Function constructor without 'unsafe-eval'	\N	block	warning	15	2	cspTest(234, 12, "default-src 'unsafe-inline'", true, {})	t
 239	setInterval() with default-src 'unsafe-eval'	1000	allow	warning	15	7	cspTest(239, 17, "default-src 'unsafe-inline' 'unsafe-eval'", false, { timeout: 1000 })	t
 240	setInterval() without 'unsafe-eval'	1000	block	warning	15	8	cspTest(240, 18, "default-src 'unsafe-inline'", true, { timeout: 1000 })	t
@@ -607,20 +607,20 @@ COPY public.test (id, title, timeout, behaviour, failure_severity, parent, execu
 518	inline script with no matching hash with script-src 'unsafe-inline' 'sha256-...'	\N	block	warning	48	5	cspTest(518, 290, "default-src 'none'; script-src 'unsafe-inline' 'sha256-AHjPTQIXJaHRXq0qBw+J3E2milLHt2FTk4+95Q87zkA='", true, {})	t
 519	inline <style> with matching sha256 hash with style-src 'sha256-...'	300	allow	warning	48	6	cspTest(519, 291, "default-src 'none'; style-src 'sha256-{style}'; img-src 'self'", false, { timeout: 300 })	t
 520	inline <style> with non-matching sha256 hash with style-src 'sha256-...'	300	block	warning	48	7	cspTest(520, 292, "default-src 'none'; style-src 'sha256-AHjPTQIXJaHRXq0qBw+J3E2milLHt2FTk4+95Q87zkA='; img-src 'self'", true, { timeout: 300 })	t
-521	onload blocked with unsafe-hashes and no matching hash	\N	block	warning	49	8	cspTest(521, 293, "default-src 'none'; script-src 'unsafe-hashes' 'sha256-AHjPTQIXJaHRXq0qBw+J3E2milLHt2FTk4+95Q87zkA='", true, { timeout: 300 })	t
-522	onload blocked without unsafe-hashes and a matching hash	\N	block	warning	49	9	cspTest(522, 294, "default-src 'none'; script-src 'sha256-LHvfXNsnM5KLf3agzy+o3cHhv1jm9wReJ7YDnBAgd0s='", true, { timeout: 300 })	t
-523	onload allowed with unsafe-hashes and a matching hash	\N	allow	warning	49	10	cspTest(523, 295, "default-src 'none'; script-src 'unsafe-hashes' 'sha256-oM7hsH0I21ZkfIofvmIBu9In3Jt4NHKRbLdi5RAf0rk='", false, { timeout: 300 })	t
-524	inline style attribute blocked with unsafe-hashes and no matching hash	\N	block	warning	49	11	cspTest(524, 296, "default-src 'none'; style-src 'unsafe-hashes' 'sha256-AHjPTQIXJaHRXq0qBw+J3E2milLHt2FTk4+95Q87zkA='; img-src 'self'", true, { timeout: 300 })	t
-525	inline style attribute blocked without unsafe-hashes and a matching hash	\N	block	warning	49	12	cspTest(525, 297, "default-src 'none'; style-src 'sha256-6uDmaZv+U7osLfJ/cNEA9wkSPbXv2Qdoo32K+mPFAAI='; img-src 'self'", true, { timeout: 300 })	t
-526	inline style attribute allowed with unsafe-hashes and a matching hash	\N	allow	warning	49	13	cspTest(526, 298, "default-src 'none'; style-src 'unsafe-hashes' 'sha256-Vrxy51YoDaq6plp+NFNo5X9iWCSxe0KdK70mxVkjLwc='; img-src 'self'", false, { timeout: 300 })	t
+521	onload blocked with unsafe-hashes and no matching hash	300	block	warning	49	8	cspTest(521, 293, "default-src 'none'; script-src 'unsafe-hashes' 'sha256-AHjPTQIXJaHRXq0qBw+J3E2milLHt2FTk4+95Q87zkA='", true, { timeout: 300 })	t
+522	onload blocked without unsafe-hashes and a matching hash	300	block	warning	49	9	cspTest(522, 294, "default-src 'none'; script-src 'sha256-LHvfXNsnM5KLf3agzy+o3cHhv1jm9wReJ7YDnBAgd0s='", true, { timeout: 300 })	t
+523	onload allowed with unsafe-hashes and a matching hash	300	allow	warning	49	10	cspTest(523, 295, "default-src 'none'; script-src 'unsafe-hashes' 'sha256-oM7hsH0I21ZkfIofvmIBu9In3Jt4NHKRbLdi5RAf0rk='", false, { timeout: 300 })	t
+524	inline style attribute blocked with unsafe-hashes and no matching hash	300	block	warning	49	11	cspTest(524, 296, "default-src 'none'; style-src 'unsafe-hashes' 'sha256-AHjPTQIXJaHRXq0qBw+J3E2milLHt2FTk4+95Q87zkA='; img-src 'self'", true, { timeout: 300 })	t
+525	inline style attribute blocked without unsafe-hashes and a matching hash	300	block	warning	49	12	cspTest(525, 297, "default-src 'none'; style-src 'sha256-6uDmaZv+U7osLfJ/cNEA9wkSPbXv2Qdoo32K+mPFAAI='; img-src 'self'", true, { timeout: 300 })	t
+526	inline style attribute allowed with unsafe-hashes and a matching hash	300	allow	warning	49	13	cspTest(526, 298, "default-src 'none'; style-src 'unsafe-hashes' 'sha256-Vrxy51YoDaq6plp+NFNo5X9iWCSxe0KdK70mxVkjLwc='; img-src 'self'", false, { timeout: 300 })	t
 527	script trusted with correct nonce should be allowed to load a non parser inserted script	\N	allow	warning	50	1	cspTest(527, 299, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce'", false, {})	t
 528	script trusted with correct nonce should not be allowed to load a parser inserted script	\N	block	critical	50	2	cspTest(528, 300, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce'", true, {})	t
 529	inline script with incorrect nonce does not execute so there is no trust to propagate	\N	block	critical	50	3	cspTest(529, 301, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce'", true, {})	t
-530	host allowlist 'self' should be ignored so a parser inserted external script is blocked	\N	block	critical	50	4	cspTest(530, 302, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce' 'self'", true, { timeout: 300 })	t
-531	script trusted with a matching hash should be allowed to load a non parser inserted script	\N	allow	warning	50	5	cspTest(531, 303, "default-src 'none'; script-src 'strict-dynamic' 'sha256-{script}'", false, { timeout: 300 })	t
-532	'unsafe-inline' should be ignored with no nonce or hash present so an inline script is blocked	\N	block	critical	50	6	cspTest(532, 304, "default-src 'none'; script-src 'strict-dynamic' 'unsafe-inline'; img-src 'self'", true, { timeout: 300 })	t
-533	trust should propagate transitively through dynamically created scripts	\N	allow	warning	50	7	cspTest(533, 305, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce'", false, { timeout: 300 })	t
-534	parser inserted external script with a matching nonce should still be allowed	\N	allow	warning	50	8	cspTest(534, 306, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce'", false, { timeout: 300 })	t
+530	host allowlist 'self' should be ignored so a parser inserted external script is blocked	300	block	critical	50	4	cspTest(530, 302, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce' 'self'", true, { timeout: 300 })	t
+531	script trusted with a matching hash should be allowed to load a non parser inserted script	300	allow	warning	50	5	cspTest(531, 303, "default-src 'none'; script-src 'strict-dynamic' 'sha256-{script}'", false, { timeout: 300 })	t
+532	'unsafe-inline' should be ignored with no nonce or hash present so an inline script is blocked	300	block	critical	50	6	cspTest(532, 304, "default-src 'none'; script-src 'strict-dynamic' 'unsafe-inline'; img-src 'self'", true, { timeout: 300 })	t
+533	trust should propagate transitively through dynamically created scripts	300	allow	warning	50	7	cspTest(533, 305, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce'", false, { timeout: 300 })	t
+534	parser inserted external script with a matching nonce should still be allowed	300	allow	warning	50	8	cspTest(534, 306, "default-src 'none'; script-src 'strict-dynamic' 'nonce-correct-nonce'", false, { timeout: 300 })	t
 \.
 
 
