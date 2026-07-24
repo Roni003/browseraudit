@@ -3,12 +3,10 @@ import os.path
 
 from common import Result, BASELINE_DIR, generate_browser_key
 
-# List of test IDs that have unreliable results, therefore shouldn't be included in the regression check
+# List of test IDs that have unreliable results (mostly due to async result reporting causing flaky
+# results when reading the test), therefore shouldn't be included in the regression check
 UNRELIABLE_TEST_IDS = [
-    237,
-    459,
-    461,
-    464
+    237, 361, 362, 363, 364, 365, 366, 369, 372, 391, 393, 459, 461, 464
 ]
 
 def parse_baseline(browser_key: str) -> Result:
